@@ -59,5 +59,10 @@
   "descriptionLength": "يجب أن يتراوح الوصف بين 5 و100 أحرف.",
   "stockCountRequired": "كمية المخزون مطلوبة.",
   "stockCountRange": "يجب أن تتراوح كمية المخزون بين 0 و99999.",
-  "ratingCountPositive": "يجب أن يكون عدد التقييمات رقماً صحيحاً غير سالب."
+  "ratingCountPositive": "يجب أن يكون عدد التقييمات رقماً صحيحاً غير سالب.",
+  "userFetchedSuccessfully": "تم جلب المستخدم بنجاح",
+  "usersFetchedSuccessfully": "تم جلب المستخدمين بنجاح",
+  "roleRequired": "الدور مطلوب",
+  "invalidRole": "دور غير صحيح. يجب أن يكون 'مدير' أو 'مستخدم'",
+  "loginSuccessFull": "تم تسجيل الدخول بنجاح"
 }

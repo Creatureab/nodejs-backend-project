@@ -10,6 +10,8 @@ import morgan from "morgan";
 import authRouter from "./routes/auth.route.js";
 import { authMiddleware } from "./middleware/auth.middleware.js";
 import productsRouter from "./routes/product.route.js";
+import orderRouter from "./routes/order.route.js";
+import adminUserRouter from "./routes/admin.user.route.js";
 
 dotenv.config({ path: ".env.local" });
 dotenv.config();
@@ -49,6 +51,8 @@ app.use(`${api}/categories`, categoryRouter);
 
 app.use(`${api}/auth`, authRouter);
 app.use(`${api}/products`, productsRouter);
+app.use(`${api}/orders`, orderRouter);
+app.use(`${api}/admin/users`, adminUserRouter);
 
 app.get(`${api}/health`, (req, res) => {
   res.send("Hello, Node.js project");

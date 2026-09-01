@@ -59,5 +59,10 @@
   "descriptionLength": "विवरण 5 से 100 अक्षरों के बीच होना चाहिए।",
   "stockCountRequired": "स्टॉक की मात्रा आवश्यक है।",
   "stockCountRange": "स्टॉक की मात्रा 0 से 99999 के बीच होनी चाहिए।",
-  "ratingCountPositive": "रेटिंग की संख्या गैर-ऋणात्मक पूर्णांक होनी चाहिए।"
+  "ratingCountPositive": "रेटिंग की संख्या गैर-ऋणात्मक पूर्णांक होनी चाहिए।",
+  "userFetchedSuccessfully": "उपयोगकर्ता सफलतापूर्वक प्राप्त किया गया",
+  "usersFetchedSuccessfully": "उपयोगकर्ता सफलतापूर्वक प्राप्त किए गए",
+  "roleRequired": "भूमिका आवश्यक है",
+  "invalidRole": "अमान्य भूमिका। भूमिका 'admin' या 'user' होनी चाहिए",
+  "loginSuccessFull": "लॉगिन सफल"
 }

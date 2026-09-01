@@ -1,6 +1,6 @@
 import express from "express";
 import { ProductModel } from "../models/product.model.js";
-import { handleRouteError } from "../helpers/error-handling.js";
+import { handleRouterError } from "../helper/error-handling.js";
 import {
   getFileURL,
   handleUploadError,
@@ -46,7 +46,7 @@ router.post(
         data: newProduct,
       });
     } catch (error) {
-      handleRouteError(error, res);
+      handleRouterError(error, res);
     }
   },
 );
@@ -105,7 +105,7 @@ router.get("/", userAndAdmin, async (req, res) => {
       ...sharedDataResponse,
     });
   } catch (error) {
-    handleRouteError(error, res);
+    handleRouterError(error, res);
   }
 });
 
@@ -123,7 +123,7 @@ router.get("/:id", async (req, res) => {
 
     return res.send(product);
   } catch (error) {
-    handleRouteError(error, res);
+    handleRouterError(error, res);
   }
 });
 
@@ -188,7 +188,7 @@ router.put(
         data: updatedProduct,
       });
     } catch (error) {
-      handleRouteError(error, res);
+      handleRouterError(error, res);
     }
   },
 );
@@ -201,7 +201,7 @@ router.delete("/:id", adminOnly, async (req, res) => {
     }
     return res.send({ message: req.t("productDeletedSuccessfully") });
   } catch (error) {
-    handleRouteError(error, res);
+    handleRouterError(error, res);
   }
 });
 

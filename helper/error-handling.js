@@ -1,4 +1,4 @@
-export const handleRouterError = (error, req, res, next) => {
+export const handleRouterError = (error, res) => {
   console.error("error", error);
 
   return res.status(500).json({

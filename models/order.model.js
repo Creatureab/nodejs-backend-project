@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { addCommonVirtuals } from "../helper/mongoose-plugin.js";
 
 const orderItemSchema = mongoose.Schema({
   product: {
@@ -18,20 +19,47 @@ const orderItemSchema = mongoose.Schema({
   },
 });
 
-const orderScehma = mongoose.Schema({
-  orderItems: [orderItemSchema],
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  status: {
-    type: String,
-    enum: {
-      values: ["pending", "processing", "shipped", "delivered", "cancelled"],
-      message:
-        'Status must be one of:"processing", "shipped", "delivered", "cancelled',
+const orderSchema = mongoose.Schema(
+  {
+    orderItems: [orderItemSchema],
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-    default: "pending",
+    status: {
+      type: String,
+      enum: {
+        values: orderStatus,
+        message:
+          'Status must be one of:"processing", "shipped", "delivered", "cancelled',
+      },
+      default: "pending",
+    },
+    totalPrice: {
+      type: Number,
+      required: [true, "total price is required."],
+    },
   },
+  {
+    timestamps: true,
+  },
+);
+// return id property better then the _id
+orderSchema.plugin(addCommonVirtuals);
+
+//Calculate total price for order items
+orderSchema.methods.calculateTotalPrice = function () {
+  return this.orderItems.reduce((total, item) => {
+    return total + item.price * item.quantity;
+  }, 0);
+};
+
+//pre save middleware: automatically before saving annd order document.
+orderSchema.pre("save", function () {
+  if (this.isModified("orderItems") || !this.totalPrice) {
+    this.totalPrice = this.calculateTotalPrice();
+  }
 });
+
+export const OrderModel = mongoose.model("Order", orderSchema);

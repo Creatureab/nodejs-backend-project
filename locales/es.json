@@ -59,5 +59,10 @@
   "descriptionLength": "La descripción debe tener entre 5 y 100 caracteres.",
   "stockCountRequired": "La cantidad en stock es obligatoria.",
   "stockCountRange": "La cantidad en stock debe estar entre 0 y 99999.",
-  "ratingCountPositive": "La cantidad de valoraciones debe ser un entero no negativo."
+  "ratingCountPositive": "La cantidad de valoraciones debe ser un entero no negativo.",
+  "userFetchedSuccessfully": "Usuario recuperado exitosamente",
+  "usersFetchedSuccessfully": "Usuarios recuperados exitosamente",
+  "roleRequired": "El rol es requerido",
+  "invalidRole": "Rol inválido. El rol debe ser 'admin' o 'user'",
+  "loginSuccessFull": "Inicio de sesión exitoso"
 }

@@ -71,5 +71,13 @@
   "descriptionLength": "Description must be between 5 and 100 characters.",
   "stockCountRequired": "Stock count is required.",
   "stockCountRange": "Stock count must be between 0 and 99999.",
-  "ratingCountPositive": "Rating count must be a non-negative integer."
+  "ratingCountPositive": "Rating count must be a non-negative integer.",
+  "userCreatedSuccessfully": "User created successfully",
+  "userUpdatedSuccessfully": "User updated successfully",
+  "userDeletedSuccessfully": "User deleted successfully",
+  "userFetchedSuccessfully": "User fetched successfully",
+  "usersFetchedSuccessfully": "Users fetched successfully",
+  "roleRequired": "Role is required",
+  "invalidRole": "Invalid role. Role must be 'admin' or 'user'",
+  "loginSuccessFull": "Login successful"
 }

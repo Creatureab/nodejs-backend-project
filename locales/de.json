@@ -59,6 +59,11 @@
   "descriptionLength": "Die Beschreibung muss zwischen 5 und 100 Zeichen lang sein.",
   "stockCountRequired": "Bestandsmenge ist erforderlich.",
   "stockCountRange": "Die Bestandsmenge muss zwischen 0 und 99999 liegen.",
-  "ratingCountPositive": "Die Anzahl der Bewertungen muss eine nicht negative Ganzzahl sein."
+  "ratingCountPositive": "Die Anzahl der Bewertungen muss eine nicht negative Ganzzahl sein.",
+  "userFetchedSuccessfully": "Benutzer erfolgreich abgerufen",
+  "usersFetchedSuccessfully": "Benutzer erfolgreich abgerufen",
+  "roleRequired": "Rolle ist erforderlich",
+  "invalidRole": "Ungültige Rolle. Rolle muss 'admin' oder 'user' sein",
+  "loginSuccessFull": "Anmeldung erfolgreich"
 }
  

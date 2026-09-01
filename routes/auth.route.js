@@ -41,7 +41,7 @@ router.post(
         token: token,
       });
     } catch (error) {
-      handleRouterError(error, req, res, next);
+      handleRouterError(error, res);
     }
   },
 );
@@ -82,7 +82,7 @@ router.post(
         },
       });
     } catch (error) {
-      handleRouterError(error, req, res, next);
+      handleRouterError(error, res);
     }
   },
 );
@@ -103,7 +103,7 @@ router.get("/profile", async (req, res) => {
       data: user,
     });
   } catch (error) {
-    handleRouterError(error, req, res);
+    handleRouterError(error, res);
   }
 });
 router.put(
@@ -111,44 +111,44 @@ router.put(
   updateValidation,
   handleValidationErrors,
   async (req, res) => {
-  try {
-    const userId = req.auth.id;
-    const updateBody = req.body;
+    try {
+      const userId = req.auth.id;
+      const updateBody = req.body;
 
-    const user = await User.findById(userId);
+      const user = await User.findById(userId);
 
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: req.t("userNotFound"),
-      });
-    }
-
-    if (updateBody.email) {
-      const existingUserByEmail = await User.findOne({
-        email: updateBody.email,
-        _id: { $ne: userId },
-      });
-
-      if (existingUserByEmail) {
-        return res.status(400).json({
+      if (!user) {
+        return res.status(404).json({
           success: false,
-          message: req.t("emailAlreadyExists"),
+          message: req.t("userNotFound"),
         });
       }
+
+      if (updateBody.email) {
+        const existingUserByEmail = await User.findOne({
+          email: updateBody.email,
+          _id: { $ne: userId },
+        });
+
+        if (existingUserByEmail) {
+          return res.status(400).json({
+            success: false,
+            message: req.t("emailAlreadyExists"),
+          });
+        }
+      }
+
+      Object.assign(user, updateBody);
+      await user.save();
+
+      res.json({
+        success: true,
+        message: req.t("profileUpdatedSuccessfully"),
+        data: user,
+      });
+    } catch (error) {
+      handleRouterError(error, res);
     }
-
-    Object.assign(user, updateBody);
-    await user.save();
-
-    res.json({
-      success: true,
-      message: req.t("profileUpdatedSuccessfully"),
-      data: user,
-    });
-  } catch (error) {
-    handleRouterError(error, req, res);
-  }
   },
 );
 export default router;
