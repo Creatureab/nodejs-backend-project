@@ -32,9 +32,6 @@ const api = process.env.API || "/api/v1";
 const mongoUri =
   process.env.CONNECT_STRING || "mongodb://127.0.0.1:27017/BackendDatabase";
 
-app.use("/public/uploads", express.static("public/uploads"));
-app.use(authMiddleware);
-
 app.use(morgan("tiny"));
 app.use(express.json());
 app.use(middleware.handle(i18next));
@@ -46,6 +43,8 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization", "Accept-Language"],
   }),
 );
+app.use("/public/uploads", express.static("public/uploads"));
+app.use(authMiddleware);
 
 app.use(`${api}/categories`, categoryRouter);
 

@@ -83,7 +83,6 @@ const handleUploadError = (error, req, res, next) => {
       message: error.message,
     });
   }
-  3;
   next();
 };
 

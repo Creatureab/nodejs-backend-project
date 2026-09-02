@@ -27,7 +27,7 @@ const productSchema = mongoose.Schema(
       minLength: [5, "Description must be at least 5 characters"],
       maxLength: [100, "Description cannot exceed 100 characters"],
     },
-    image: {
+    images: {
       type: [String],
       required: [true, "at least one image is required"],
     },

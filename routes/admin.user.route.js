@@ -100,6 +100,27 @@ router.get("/", adminOnly, async (req, res) => {
   }
 });
 
+// 📊 GET USER STATISTICS (Bonus)
+router.get("/stats/overview", adminOnly, async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const adminCount = await User.countDocuments({ role: "admin" });
+    const userCount = await User.countDocuments({ role: "user" });
+
+    res.json({
+      success: true,
+      message: "User statistics retrieved successfully",
+      data: {
+        totalUsers,
+        adminCount,
+        userCount,
+      },
+    });
+  } catch (error) {
+    handleRouterError(error, res);
+  }
+});
+
 // 👤 GET SINGLE USER BY ID
 router.get("/:id", adminOnly, async (req, res) => {
   try {
@@ -284,27 +305,6 @@ router.delete("/:id", adminOnly, async (req, res) => {
       success: true,
       message: req.t("userDeletedSuccessfully"),
       data: user.toJSON(),
-    });
-  } catch (error) {
-    handleRouterError(error, res);
-  }
-});
-
-// 📊 GET USER STATISTICS (Bonus)
-router.get("/stats/overview", adminOnly, async (req, res) => {
-  try {
-    const totalUsers = await User.countDocuments();
-    const adminCount = await User.countDocuments({ role: "admin" });
-    const userCount = await User.countDocuments({ role: "user" });
-
-    res.json({
-      success: true,
-      message: "User statistics retrieved successfully",
-      data: {
-        totalUsers,
-        adminCount,
-        userCount,
-      },
     });
   } catch (error) {
     handleRouterError(error, res);
