@@ -47,7 +47,7 @@ router.delete("/:id", adminOnly, async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", adminOnly, async (req, res) => {
   try {
     if (!req.body.name || req.body.name.trim().length < 5) {
       return res.status(400).send({

@@ -15,7 +15,7 @@ export const genenrateToken = (user) => {
     },
     process.env.SECRET,
     {
-      expiresIn: "7h",
+      expiresIn: "7d",
     },
   );
 };

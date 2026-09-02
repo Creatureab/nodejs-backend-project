@@ -1,7 +1,7 @@
 import express from "express";
 import { OrderModel } from "../models/order.model.js";
 import { ProductModel } from "../models/product.model.js";
-import { handleRouteError } from "../helper/error-handling.js";
+import { handleRouterError } from "../helper/error-handling.js";
 import {
   adminOnly,
   userAndAdmin,
@@ -124,7 +124,7 @@ router.post("/", userAndAdmin, async (req, res) => {
       data: populatedOrder,
     });
   } catch (error) {
-    handleRouteError(error, res);
+    handleRouterError(error, res);
   }
 });
 
@@ -176,7 +176,7 @@ router.get("/", async (req, res) => {
       },
     });
   } catch (error) {
-    handleRouteError(error, res);
+    handleRouterError(error, res);
   }
 });
 
@@ -209,7 +209,7 @@ router.get("/:id", userAndAdmin, async (req, res) => {
 
     res.send(order);
   } catch (error) {
-    handleRouteError(error, res);
+    handleRouterError(error, res);
   }
 });
 
@@ -226,7 +226,7 @@ router.delete("/:id", adminOnly, async (req, res) => {
       data: order,
     });
   } catch (error) {
-    handleRouteError(error, res);
+    handleRouterError(error, res);
   }
 });
 
@@ -261,7 +261,7 @@ router.patch("/:id/change-status", adminOnly, async (req, res) => {
       data: updatedOrder,
     });
   } catch (error) {
-    handleRouteError(error, res);
+    handleRouterError(error, res);
   }
 });
 
@@ -324,7 +324,7 @@ router.patch("/:id/cancel-order", userOnly, async (req, res) => {
       data: updatedOrder,
     });
   } catch (error) {
-    handleRouteError(error, res);
+    handleRouterError(error, res);
   }
 });
 

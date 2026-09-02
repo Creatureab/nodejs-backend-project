@@ -51,7 +51,7 @@ router.post(
   },
 );
 
-router.get("/", userAndAdmin, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const search = req.query.search;
     const categoryID = req.query.categoryID;

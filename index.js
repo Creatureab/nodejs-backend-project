@@ -27,7 +27,7 @@ i18next
   });
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 const api = process.env.API || "/api/v1";
 const mongoUri =
   process.env.CONNECT_STRING || "mongodb://127.0.0.1:27017/BackendDatabase";

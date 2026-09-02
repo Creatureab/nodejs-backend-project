@@ -5,12 +5,14 @@ dotenv.config({ path: ".env.local" });
 const publicRoutes = [
   "/api/v1/auth/login",
   "/api/v1/auth/register",
+  "/api/v1/categories",
+  "/api/v1/products",
   "GET:/public/uploads",
 ];
 
 export const authMiddleware = (req, res, next) => {
   try {
-    const path = req.path;
+    const path = req.originalUrl.split("?")[0];
 
     if (publicRoutes.includes(path)) {
       return next();
@@ -27,7 +29,7 @@ export const authMiddleware = (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.SECRET);
 
-    req.auth = {
+    req.user = {
       id: decoded.id,
       email: decoded.email,
       role: decoded.role,
