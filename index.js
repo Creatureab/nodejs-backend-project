@@ -38,23 +38,47 @@ app.use(express.json());
 const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } =
   process.env;
 
-if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
-  console.error("Fatal: Cloudinary credentials are not set.");
-  console.error(
-    "Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET in your .env file.",
-  );
-  process.exit(1);
+// Only check Cloudinary credentials in development
+if (process.env.NODE_ENV !== 'production') {
+  if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
+    console.error("Warning: Cloudinary credentials are not set.");
+    console.error("Image uploads will fail without proper credentials.");
+  }
 }
+
 app.use(middleware.handle(i18next));
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://mydomain.com"],
+    origin: ["http://localhost:3000", "https://mydomain.com", process.env.FRONTEND_URL],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization", "Accept-Language"],
   }),
 );
 app.use("/public/uploads", express.static("public/uploads"));
+
+// Public routes (no authentication required)
+app.get(`${api}/health`, (req, res) => {
+  res.send("Hello, Node.js project");
+});
+
+app.get("/", (req, res) => {
+  res.json({
+    message: "E-Commerce API is running",
+    status: "healthy",
+    version: "1.0.0",
+    endpoints: {
+      health: "/api/v1/health",
+      auth: "/api/v1/auth",
+      products: "/api/v1/products",
+      categories: "/api/v1/categories",
+      orders: "/api/v1/orders",
+      admin: "/api/v1/admin/users"
+    }
+  });
+});
+
+// Apply auth middleware to protected routes
 app.use(authMiddleware);
 
 app.use(`${api}/categories`, categoryRouter);
@@ -63,10 +87,6 @@ app.use(`${api}/auth`, authRouter);
 app.use(`${api}/products`, productsRouter);
 app.use(`${api}/orders`, orderRouter);
 app.use(`${api}/admin/users`, adminUserRouter);
-
-app.get(`${api}/health`, (req, res) => {
-  res.send("Hello, Node.js project");
-});
 
 mongoose
   .connect(mongoUri)
