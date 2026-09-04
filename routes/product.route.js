@@ -5,6 +5,7 @@ import {
   getFileURL,
   handleUploadError,
   uploadMultiple,
+  deleteCloudinaryImage,
 } from "../middleware/upload.middleware.js";
 import { adminOnly, userAndAdmin } from "../middleware/roles.middleware.js";
 import {
@@ -25,8 +26,19 @@ router.post(
   async (req, res) => {
     try {
       let imageURLs = [];
-      if (req.files && req.files.length > 0) {
-        imageURLs = req.files.map((file) => getFileURL(req, file.filename));
+      // Handle both single image and multiple images fields
+      const uploadedFiles = [];
+      if (req.files) {
+        if (req.files.image) {
+          uploadedFiles.push(...req.files.image);
+        }
+        if (req.files.images) {
+          uploadedFiles.push(...req.files.images);
+        }
+      }
+
+      if (uploadedFiles.length > 0) {
+        imageURLs = uploadedFiles.map((file) => getFileURL(file));
       }
 
       let newProduct = new ProductModel({
@@ -160,14 +172,29 @@ router.put(
         updateData.description = req.body.description;
 
       // Handle image uploads
-      if (req.files && req.files.length > 0) {
-        const imageURLs = req.files.map((file) =>
-          getFileURL(req, file.filename),
-        );
+      const uploadedFiles = [];
+      if (req.files) {
+        if (req.files.image) {
+          uploadedFiles.push(...req.files.image);
+        }
+        if (req.files.images) {
+          uploadedFiles.push(...req.files.images);
+        }
+      }
+
+      if (uploadedFiles.length > 0) {
+        const imageURLs = uploadedFiles.map((file) => getFileURL(file));
 
         if (req.body.replaceImages === "true") {
+          // Delete old images from Cloudinary
+          await Promise.all(
+            (existingProduct.images || []).map((url) =>
+              deleteCloudinaryImage(url)
+            )
+          );
           updateData.images = imageURLs;
         } else {
+          // Add to existing images
           updateData.images = [...existingProduct.images, ...imageURLs];
         }
       }
@@ -197,8 +224,19 @@ router.delete("/:id", adminOnly, async (req, res) => {
   try {
     const product = await ProductModel.findByIdAndDelete(req.params.id);
     if (!product) {
-      return res.status(404).send({ message: req.t("productNotFound") });
+      return res.status(404).json({
+        success: false,
+        message: req.t("productNotFound"),
+      });
     }
+
+    // Delete images from Cloudinary
+    if (product.images && product.images.length > 0) {
+      await Promise.all(
+        product.images.map((img) => deleteCloudinaryImage(img))
+      );
+    }
+
     return res.send({ message: req.t("productDeletedSuccessfully") });
   } catch (error) {
     handleRouterError(error, res);

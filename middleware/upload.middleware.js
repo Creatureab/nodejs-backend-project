@@ -1,26 +1,28 @@
+import cloudinary from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
-import path from "path";
-import fs from "fs";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
-
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, UPLOAD_DIR);
-  },
-
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-
-    const extension = path.extname(file.originalname);
-
-    cb(null, `product-${uniqueSuffix}${extension}`);
-  },
+// Cloudinary Configuration
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+// Cloudinary Storage Engine
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "uploads",
+    resource_type: "image",
+    allowed_formats: ["jpg", "jpeg", "png", "gif", "webp"],
+    public_id: (req, file) => {
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+      return `product-${uniqueSuffix}`;
+    }
+  }
+});
+
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image/")) {
     cb(null, true);
@@ -33,8 +35,8 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, //5 mb limit for file
-    files: 10,
+    fileSize: 5 * 1024 * 1024, // 5 MB per file
+    files: 10, // Max 10 files per upload
   },
 });
 
@@ -45,11 +47,34 @@ const uploadMultiple = upload.fields([
   { name: "images", maxCount: 10 },
 ]);
 
-const getFileURL = (req, filename) => {
-  const protocol = req.protocol;
-  const host = req.get("host");
+const getFileURL = (file) => {
+  if (!file) return null;
+  return file.path || file.secure_url || null;
+};
 
-  return `${protocol}://${host}/public/uploads/${filename}`;
+// Cloudinary Image Deletion Helper Functions
+const getPublicIDFromURL = (url) => {
+  if (!url) return null;
+  try {
+    const parts = url.split('/upload/')[1];
+    if (!parts) return null;
+    const withoutVersion = parts.replace(/^v\d+\//, '');
+    const publicId = withoutVersion.replace(/\.[^/.]+$/, '');
+    return publicId;
+  } catch (error) {
+    console.error("Error extracting public ID:", error);
+    return null;
+  }
+};
+
+const deleteCloudinaryImage = async (url) => {
+  const publicId = getPublicIDFromURL(url);
+  if (!publicId) return;
+  try {
+    await cloudinary.uploader.destroy(publicId);
+  } catch (error) {
+    console.error("Cloudinary destroy failed:", error.message);
+  }
 };
 
 const handleUploadError = (error, req, res, next) => {
@@ -65,7 +90,6 @@ const handleUploadError = (error, req, res, next) => {
           success: false,
           message: req.t("fileCountLimit10Files"),
         });
-
       case "LIMIT_UNEXPECTED_FILE":
         return res.status(400).json({
           success: false,
@@ -86,4 +110,11 @@ const handleUploadError = (error, req, res, next) => {
   next();
 };
 
-export { handleUploadError, uploadSingle, uploadMultiple, getFileURL };
+export { 
+  handleUploadError, 
+  uploadSingle, 
+  uploadMultiple, 
+  getFileURL, 
+  deleteCloudinaryImage,
+  getPublicIDFromURL 
+};

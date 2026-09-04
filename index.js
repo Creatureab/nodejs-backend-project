@@ -34,6 +34,17 @@ const mongoUri =
 
 app.use(morgan("tiny"));
 app.use(express.json());
+
+const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } =
+  process.env;
+
+if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
+  console.error("Fatal: Cloudinary credentials are not set.");
+  console.error(
+    "Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET in your .env file.",
+  );
+  process.exit(1);
+}
 app.use(middleware.handle(i18next));
 app.use(
   cors({
