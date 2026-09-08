@@ -128,7 +128,7 @@ router.post("/", userAndAdmin, async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/", userAndAdmin, async (req, res) => {
   try {
     const { auth: currentUser } = req;
     const isAdmin = currentUser.role === "admin";

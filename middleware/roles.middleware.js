@@ -1,5 +1,7 @@
+import { authMiddleware } from "./auth.middleware.js";
+
 const roleAuth = (allowedRoles) => {
-  return (req, res, next) => {
+  return [authMiddleware, (req, res, next) => {
     try {
       if (!req.auth) {
         return res.status(401).json({
@@ -24,7 +26,7 @@ const roleAuth = (allowedRoles) => {
         message: error.message,
       });
     }
-  };
+  }];
 };
 
 export const adminOnly = roleAuth(["admin"]);

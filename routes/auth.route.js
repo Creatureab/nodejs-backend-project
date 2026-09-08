@@ -9,6 +9,7 @@ import {
 import { genenrateToken } from "../helper/jwt.js";
 import { body } from "express-validator";
 import { handleRouterError } from "../helper/error-handling.js";
+import { userAndAdmin } from "../middleware/roles.middleware.js";
 
 const router = express.Router();
 
@@ -87,7 +88,7 @@ router.post(
   },
 );
 
-router.get("/profile", async (req, res) => {
+router.get("/profile", userAndAdmin, async (req, res) => {
   try {
     const user = await User.findById(req.auth.id).select("-password");
 
@@ -108,6 +109,7 @@ router.get("/profile", async (req, res) => {
 });
 router.put(
   "/profile",
+  userAndAdmin,
   updateValidation,
   handleValidationErrors,
   async (req, res) => {
