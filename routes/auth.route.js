@@ -19,6 +19,8 @@ router.post(
   handleValidationErrors,
   async (req, res, next) => {
     try {
+      let users = await User.find({});
+      console.log("hiiii,", users);
       const user = new User(req.body);
 
       const { email } = req.body;
