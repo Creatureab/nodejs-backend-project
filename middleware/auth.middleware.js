@@ -4,8 +4,8 @@ import dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 
 const publicRoutes = [
-  { path: "/api/v1/auth/login", method: "POST" },
-  { path: "/api/v1/auth/register", method: "POST" },
+  { path: "/auth/login", method: "POST" },
+  { path: "/auth/register", method: "POST" },
   { path: "/api/v1/categories", method: "GET" },
   { path: "/api/v1/products", method: "GET" },
 ];
