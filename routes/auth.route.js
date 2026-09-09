@@ -14,7 +14,7 @@ import { userAndAdmin } from "../middleware/roles.middleware.js";
 const router = express.Router();
 
 router.post(
-  "/auth/register",
+  "/register",
   registerValidation,
   handleValidationErrors,
   async (req, res, next) => {
@@ -49,7 +49,7 @@ router.post(
   },
 );
 router.post(
-  "/auth/login",
+  "/login",
   loginValidation,
   handleValidationErrors,
   async (req, res, next) => {
