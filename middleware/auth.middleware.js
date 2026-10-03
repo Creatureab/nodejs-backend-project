@@ -35,6 +35,17 @@ export const authMiddleware = (req, res, next) => {
       });
     }
 
+<<<<<<< Updated upstream
+=======
+    if (!process.env.SECRET) {
+      console.error("JWT SECRET environment variable is missing");
+      return res.status(500).json({
+        success: false,
+        message: "Server configuration error",
+      });
+    }
+
+>>>>>>> Stashed changes
     const decoded = jwt.verify(token, process.env.SECRET);
 
     req.auth = {
@@ -47,6 +58,10 @@ export const authMiddleware = (req, res, next) => {
 
     next();
   } catch (error) {
+<<<<<<< Updated upstream
+=======
+    console.error("Auth middleware error:", error.name);
+>>>>>>> Stashed changes
     return res.status(401).json({
       success: false,
       message: "Invalid or expired token",

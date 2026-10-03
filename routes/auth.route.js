@@ -18,9 +18,32 @@ router.post(
   handleValidationErrors,
   async (req, res, next) => {
     try {
+<<<<<<< Updated upstream
       const user = new User(req.body);
+=======
+      const {
+        email,
+        password,
+        userName,
+        city,
+        postalCode,
+        addressLine1,
+        addressLine2,
+        phoneNumber,
+      } = req.body;
+>>>>>>> Stashed changes
 
-      const { email } = req.body;
+      const user = new User({
+        email,
+        password,
+        userName,
+        city,
+        postalCode,
+        addressLine1,
+        addressLine2,
+        phoneNumber,
+        role: "user",
+      });
 
       const existingUser = await User.findOne({ email });
 
@@ -113,7 +136,8 @@ router.put(
   async (req, res) => {
     try {
       const userId = req.auth.id;
-      const updateBody = req.body;
+      const updateBody = { ...req.body };
+      delete updateBody.role;
 
       const user = await User.findById(userId);
 

@@ -5,7 +5,6 @@ export const registerValidation = [
     .isEmail()
     .withMessage((value, { req }) => req.t("enterValidEmail")),
   body("password").isLength({ min: 6 }),
-  body("role").optional().isIn(["admin", "user"]),
   body("userName")
     .notEmpty()
     .withMessage((value, { req }) => req.t("userNameRequired")),
@@ -39,10 +38,6 @@ export const updateValidation = [
     .optional()
     .isLength({ min: 6 })
     .withMessage((value, { req }) => req.t("passwordMinLength")),
-  body("role")
-    .optional()
-    .isIn(["admin", "user"])
-    .withMessage((value, { req }) => req.t("invalidRole")),
   body("userName")
     .optional()
     .trim()

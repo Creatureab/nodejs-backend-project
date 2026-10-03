@@ -187,10 +187,9 @@ router.patch(
     try {
       const userId = req.params.id;
 
-      // Prevent updating _id
       delete req.body._id;
+      delete req.body.role;
 
-      // Check if user exists
       const user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({
@@ -199,7 +198,6 @@ router.patch(
         });
       }
 
-      // Check if email is being changed and if it already exists
       if (req.body.email && req.body.email !== user.email) {
         const existingUser = await User.findOne({ email: req.body.email });
         if (existingUser) {
@@ -210,16 +208,29 @@ router.patch(
         }
       }
 
-      // Update user
-      const updatedUser = await User.findByIdAndUpdate(userId, req.body, {
-        new: true,
-        runValidators: true,
-      });
+      const allowedFields = [
+        "email",
+        "password",
+        "userName",
+        "city",
+        "postalCode",
+        "addressLine1",
+        "addressLine2",
+        "phoneNumber",
+      ];
+
+      for (const field of allowedFields) {
+        if (req.body[field] !== undefined) {
+          user[field] = req.body[field];
+        }
+      }
+
+      await user.save();
 
       res.json({
         success: true,
         message: req.t("userUpdatedSuccessfully"),
-        data: updatedUser.toJSON(),
+        data: user.toJSON(),
       });
     } catch (error) {
       handleRouterError(error, res);
@@ -255,12 +266,21 @@ router.patch("/:id/change-role", adminOnly, async (req, res) => {
       });
     }
 
-    // Prevent admin from demoting themselves
     if (user._id.toString() === req.auth.id && role === "user") {
       return res.status(400).json({
         success: false,
         message: "Cannot demote yourself from admin role",
       });
+    }
+
+    if (user.role === "admin" && role === "user") {
+      const adminCount = await User.countDocuments({ role: "admin" });
+      if (adminCount <= 1) {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot demote the last admin account",
+        });
+      }
     }
 
     const updatedUser = await User.findByIdAndUpdate(
