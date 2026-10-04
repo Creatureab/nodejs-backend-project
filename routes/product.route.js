@@ -41,6 +41,11 @@ router.post(
         imageURLs = uploadedFiles.map((file) => getFileURL(file));
       }
 
+      console.info("[product create] saving product", {
+        fields: Object.keys(req.body),
+        imageCount: imageURLs.length,
+      });
+
       let newProduct = new ProductModel({
         title: req.body.title,
         price: parseFloat(req.body.price), // "1.6" => 1.6
@@ -52,12 +57,21 @@ router.post(
 
       newProduct = await newProduct.save();
 
+      console.info("[product create] product saved", {
+        productId: newProduct.id,
+        imageCount: newProduct.images.length,
+      });
+
       return res.status(201).json({
         success: true,
         message: req.t("productCreatedSuccessfully"),
         data: newProduct,
       });
     } catch (error) {
+      console.error("[product create] save failed", {
+        name: error.name,
+        message: error.message,
+      });
       handleRouterError(error, res);
     }
   },

@@ -46,10 +46,36 @@ const upload = multer({
 
 const uploadSingle = upload.single("image");
 
-const uploadMultiple = upload.fields([
+const multerUpload = upload.fields([
   { name: "image", maxCount: 10 },
   { name: "images", maxCount: 10 },
 ]);
+
+const uploadMultiple = (req, res, next) => {
+  console.info("[product upload] started", {
+    method: req.method,
+    path: req.originalUrl,
+    contentLength: req.headers["content-length"] || "unknown",
+  });
+
+  multerUpload(req, res, (error) => {
+    if (error) {
+      console.error("[product upload] failed", {
+        name: error.name,
+        code: error.code,
+        message: error.message,
+      });
+      return next(error);
+    }
+
+    const files = Object.values(req.files || {}).flat();
+    console.info("[product upload] completed", {
+      fileCount: files.length,
+      fields: Object.keys(req.files || {}),
+    });
+    next();
+  });
+};
 
 const getFileURL = (file) => {
   if (!file) return null;
