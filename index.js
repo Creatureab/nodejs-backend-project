@@ -47,15 +47,26 @@ app.use(express.json());
 
 app.use(middleware.handle(i18next));
 
+const allowedFrontendOrigins = [
+  "https://frontend-ecommerce-alpha-three.vercel.app",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+const frontendPreviewOrigin =
+  /^https:\/\/frontend-ecommerce-[a-z0-9-]+-creatureabs-projects\.vercel\.app$/;
+
 app.use(
   cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? [
-            "https://frontend-ecommerce-alpha-three.vercel.app",
-            process.env.FRONTEND_URL,
-          ].filter(Boolean)
-        : "*",
+    origin: (origin, callback) => {
+      if (
+        process.env.NODE_ENV !== "production" ||
+        !origin ||
+        allowedFrontendOrigins.includes(origin) ||
+        frontendPreviewOrigin.test(origin)
+      ) {
+        return callback(null, true);
+      }
+      return callback(null, false);
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization", "Accept-Language"],
