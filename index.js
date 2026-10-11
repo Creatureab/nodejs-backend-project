@@ -42,17 +42,6 @@ if (!mongoUri) {
   throw new Error("CONNECT_STRING is missing from .env.local");
 }
 
-const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } =
-  process.env;
-
-// Only check Cloudinary credentials in development
-if (process.env.NODE_ENV !== "production") {
-  if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
-    console.error("Warning: Cloudinary credentials are not set.");
-    console.error("Image uploads will fail without proper credentials.");
-  }
-}
-
 app.use(morgan("tiny"));
 app.use(express.json());
 

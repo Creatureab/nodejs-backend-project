@@ -1,12 +1,6 @@
 import express from "express";
 import { ProductModel } from "../models/product.model.js";
 import { handleRouterError } from "../helper/error-handling.js";
-import {
-  getFileURL,
-  handleUploadError,
-  uploadMultiple,
-  deleteCloudinaryImage,
-} from "../middleware/upload.middleware.js";
 import { adminOnly, userAndAdmin } from "../middleware/roles.middleware.js";
 import {
   createProductValidation,
@@ -19,27 +13,11 @@ const router = express.Router();
 router.post(
   "/",
   adminOnly,
-  uploadMultiple,
-  handleUploadError,
   createProductValidation,
   handleValidationErrors,
   async (req, res) => {
     try {
-      let imageURLs = [];
-      // Handle both single image and multiple images fields
-      const uploadedFiles = [];
-      if (req.files) {
-        if (req.files.image) {
-          uploadedFiles.push(...req.files.image);
-        }
-        if (req.files.images) {
-          uploadedFiles.push(...req.files.images);
-        }
-      }
-
-      if (uploadedFiles.length > 0) {
-        imageURLs = uploadedFiles.map((file) => getFileURL(file));
-      }
+      const imageURLs = req.body.images;
 
       console.info("[product create] saving product", {
         fields: Object.keys(req.body),
@@ -156,8 +134,6 @@ router.get("/:id", async (req, res) => {
 router.put(
   "/:id",
   adminOnly,
-  uploadMultiple,
-  handleUploadError,
   updateProductValidation,
   handleValidationErrors,
   async (req, res) => {
@@ -185,33 +161,7 @@ router.put(
       if (req.body.description !== undefined)
         updateData.description = req.body.description;
 
-      // Handle image uploads
-      const uploadedFiles = [];
-      if (req.files) {
-        if (req.files.image) {
-          uploadedFiles.push(...req.files.image);
-        }
-        if (req.files.images) {
-          uploadedFiles.push(...req.files.images);
-        }
-      }
-
-      if (uploadedFiles.length > 0) {
-        const imageURLs = uploadedFiles.map((file) => getFileURL(file));
-
-        if (req.body.replaceImages === "true") {
-          // Delete old images from Cloudinary
-          await Promise.all(
-            (existingProduct.images || []).map((url) =>
-              deleteCloudinaryImage(url)
-            )
-          );
-          updateData.images = imageURLs;
-        } else {
-          // Add to existing images
-          updateData.images = [...existingProduct.images, ...imageURLs];
-        }
-      }
+      if (req.body.images !== undefined) updateData.images = req.body.images;
 
       // Update the product
       const updatedProduct = await ProductModel.findByIdAndUpdate(
@@ -242,13 +192,6 @@ router.delete("/:id", adminOnly, async (req, res) => {
         success: false,
         message: req.t("productNotFound"),
       });
-    }
-
-    // Delete images from Cloudinary
-    if (product.images && product.images.length > 0) {
-      await Promise.all(
-        product.images.map((img) => deleteCloudinaryImage(img))
-      );
     }
 
     return res.send({ message: req.t("productDeletedSuccessfully") });

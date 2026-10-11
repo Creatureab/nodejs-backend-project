@@ -27,7 +27,7 @@ touch index.js .env .gitignore
 ## Step 3: Install backend packages
 
 ```bash
-npm install dotenv express express-jwt express-validator i18next i18next-fs-backend i18next-http-middleware jsonwebtoken jwt-decode mongoose multer
+npm install dotenv express express-jwt express-validator i18next i18next-fs-backend i18next-http-middleware jsonwebtoken jwt-decode mongoose
 ```
 
 > Note: Use `jsonwebtoken`, not `jsonwebtokens`.
@@ -67,7 +67,7 @@ If you already created the project folder and only need the commands:
 
 ```bash
 npm init -y
-npm install dotenv express express-jwt express-validator i18next i18next-fs-backend i18next-http-middleware jsonwebtoken jwt-decode mongoose multer
+npm install dotenv express express-jwt express-validator i18next i18next-fs-backend i18next-http-middleware jsonwebtoken jwt-decode mongoose
 npm install -D nodemon
 ```
 

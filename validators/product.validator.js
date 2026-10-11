@@ -62,6 +62,13 @@ export const createProductValidation = [
         req.t("stockCountRange") || "Stock count must be between 0 and 99999",
     ),
 
+  body("images")
+    .isArray({ min: 1 })
+    .withMessage("At least one image URL is required"),
+  body("images.*")
+    .isURL({ protocols: ["http", "https"], require_protocol: true })
+    .withMessage("Each image must be a valid HTTP or HTTPS URL"),
+
   body("rating.count")
     .optional()
     .isInt({ min: 0 })
@@ -115,6 +122,15 @@ export const updateProductValidation = [
       (value, { req }) =>
         req.t("stockCountRange") || "Stock count must be between 0 and 99999",
     ),
+
+  body("images")
+    .optional()
+    .isArray({ min: 1 })
+    .withMessage("Provide at least one image URL"),
+  body("images.*")
+    .optional()
+    .isURL({ protocols: ["http", "https"], require_protocol: true })
+    .withMessage("Each image must be a valid HTTP or HTTPS URL"),
 ];
 
 export const handleValidationErrors = (req, res, next) => {
